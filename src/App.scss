@@ -1,0 +1,50 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
+
+.App {
+  min-height: 100vh;
+
+  position: relative;
+  background-image: url("./background.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.app-data {
+  display: flex;
+}
+
+.loader-container {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.alert-bar {
+  position: absolute !important;
+  width: 100%;
+  z-index: 3000;
+}
+
+.alert-bar .chakra-alert {
+  width: 40% !important;
+  max-width: 60% !important;
+  text-align: center;
+  margin: 20px auto 10px !important;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.281);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
