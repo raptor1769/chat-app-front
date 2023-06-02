@@ -9,6 +9,7 @@ import { selectedChat } from "../redux/SelectedChat";
 import NewGroupModal from "./others/NewGroupModal";
 import generateHeaders from "../config";
 import useErrorHandle from "../custom/ErrorHandle";
+import { getSender } from "../helpers/chatData";
 
 const MyChats = ({ fetchAgain, setFetchAgain }) => {
   const reduxSelectedChat = useSelector((state) => state.selectedChat.chatData);
@@ -38,7 +39,7 @@ const MyChats = ({ fetchAgain, setFetchAgain }) => {
     try {
       setIsLoading(true);
       const { data } = await axios.get(
-        `${process.env.REACT_APP_PROXY}/chat`,
+        `${process.env.REACT_APP_PROXY}/api/chat`,
         headers
       );
       setIsLoading(false);
@@ -60,10 +61,10 @@ const MyChats = ({ fetchAgain, setFetchAgain }) => {
     }
   }, [fetchAgain, fetchChats, setFetchAgain]);
 
-  const getSender = (users) => {
-    const loggedUser = JSON.parse(localStorage.getItem("user"));
-    return users[0]._id === loggedUser._id ? users[1].name : users[0].name;
-  };
+  // const getSender = (users) => {
+  //   const loggedUser = JSON.parse(localStorage.getItem("user"));
+  //   return users[0]._id === loggedUser._id ? users[1].name : users[0].name;
+  // };
 
   return (
     <Box

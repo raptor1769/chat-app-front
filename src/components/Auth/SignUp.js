@@ -109,7 +109,7 @@ const SignUp = () => {
     try {
       dispatch(loaderStart());
       const response = await axios.post(
-        `${process.env.REACT_APP_PROXY}/user/register`,
+        `${process.env.REACT_APP_PROXY}/api/user/register`,
         { name: name, email: email, password: password, pic: pic },
         headers
       );
@@ -125,7 +125,6 @@ const SignUp = () => {
       localStorage.setItem("user", JSON.stringify(response.data));
       navigate("/chats");
       dispatch(loaderStop());
-      // console.log(response);
     } catch (err) {
       dispatch(
         showAlert({

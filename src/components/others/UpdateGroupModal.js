@@ -25,7 +25,12 @@ import { selectedChat } from "../../redux/SelectedChat";
 import UserListItem from "../UserCards/UserListItem";
 import useErrorHandle from "../../custom/ErrorHandle";
 
-const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
+const UpdateGroupModal = ({
+  fetchAgain,
+  setFetchAgain,
+  selectedChatProp,
+  fetchMessages,
+}) => {
   const [updateName, setUpdateName] = useState("");
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -42,7 +47,7 @@ const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.get(
-        `${process.env.REACT_APP_PROXY}/user?search=${search}`,
+        `${process.env.REACT_APP_PROXY}/api/user?search=${search}`,
         headers
       );
       setSearchResult(data);
@@ -71,7 +76,7 @@ const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.put(
-        `${process.env.REACT_APP_PROXY}/chat/group`,
+        `${process.env.REACT_APP_PROXY}/api/chat/group`,
         {
           chatId: selectedChatProp._id,
           chatName: updateName.trim(),
@@ -116,7 +121,7 @@ const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.put(
-        `${process.env.REACT_APP_PROXY}/chat/removeUsers`,
+        `${process.env.REACT_APP_PROXY}/api/chat/removeUsers`,
         { chatId: selectedChatProp._id, userId: user._id },
         headers
       );
@@ -125,6 +130,7 @@ const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
       } else {
         dispatch(selectedChat(data));
       }
+      fetchMessages();
       setFetchAgain(true);
       dispatch(loaderStop());
     } catch (err) {
@@ -162,7 +168,7 @@ const UpdateGroupModal = ({ fetchAgain, setFetchAgain, selectedChatProp }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.put(
-        `${process.env.REACT_APP_PROXY}/chat/addUsers`,
+        `${process.env.REACT_APP_PROXY}/api/chat/addUsers`,
         { chatId: selectedChatProp._id, userId: user._id },
         headers
       );

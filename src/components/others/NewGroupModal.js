@@ -40,7 +40,7 @@ const NewGroupModal = ({ children }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.get(
-        `${process.env.REACT_APP_PROXY}/user?search=${search}`,
+        `${process.env.REACT_APP_PROXY}/api/user?search=${search}`,
         headers
       );
       setSearchResult(data);
@@ -101,7 +101,7 @@ const NewGroupModal = ({ children }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.post(
-        `${process.env.REACT_APP_PROXY}/chat/group`,
+        `${process.env.REACT_APP_PROXY}/api/chat/group`,
         {
           name: groupName.trim(),
           users: JSON.stringify(selectedUsers.map((u) => u._id)),

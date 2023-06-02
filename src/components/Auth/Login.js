@@ -57,7 +57,7 @@ const Login = () => {
     try {
       dispatch(loaderStart());
       const response = await axios.post(
-        `${process.env.REACT_APP_PROXY}/user/login`,
+        `${process.env.REACT_APP_PROXY}/api/user/login`,
         { email: email, password: password },
         headers
       );
@@ -124,7 +124,7 @@ const Login = () => {
       >
         Login
       </Button>
-      <Button
+      {/* <Button
         colorScheme="red"
         variant="solid"
         width={"100%"}
@@ -135,7 +135,7 @@ const Login = () => {
         }}
       >
         Get Guest User Creds
-      </Button>
+      </Button> */}
     </VStack>
   );
 };

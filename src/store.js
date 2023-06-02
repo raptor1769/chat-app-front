@@ -4,6 +4,7 @@ import authReducer from "./redux/Auth";
 import alertReducer from "./redux/Alert";
 import chatReducer from "./redux/Chats";
 import selectedChatReducer from "./redux/SelectedChat";
+import notificationReducer from "./redux/Notification";
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
     alert: alertReducer,
     chats: chatReducer,
     selectedChat: selectedChatReducer,
+    notifications: notificationReducer,
   },
 });

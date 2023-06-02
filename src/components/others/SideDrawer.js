@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Drawer,
@@ -31,14 +32,23 @@ import { addChat } from "../../redux/Chats";
 import generateHeaders from "../../config";
 import useLogout from "../../custom/Logout";
 import useErrorHandle from "../../custom/ErrorHandle";
+import { getSender } from "../../helpers/chatData";
+import { removeNotification } from "../../redux/Notification";
 
 const SideDrawer = ({ loggedUser }) => {
+  const chats = useSelector((state) => state.chats.chats);
+
+  const notificationsStore = useSelector(
+    (state) => state.notifications.notifications
+  );
+
+  const [notification, setNotifications] = useState(notificationsStore);
+
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const chats = useSelector((state) => state.chats.chats);
 
   const dispatch = useDispatch();
   const logout = useLogout();
@@ -51,6 +61,10 @@ const SideDrawer = ({ loggedUser }) => {
     logout();
     dispatch(loaderStop());
   };
+
+  useEffect(() => {
+    setNotifications(notificationsStore);
+  }, [notificationsStore]);
 
   const searchHandler = async () => {
     if (search.length < 3) {
@@ -69,7 +83,7 @@ const SideDrawer = ({ loggedUser }) => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `${process.env.REACT_APP_PROXY}/user?search=${search}`,
+        `${process.env.REACT_APP_PROXY}/api/user?search=${search}`,
         headers
       );
       setLoading(false);
@@ -83,7 +97,7 @@ const SideDrawer = ({ loggedUser }) => {
     try {
       dispatch(loaderStart());
       const { data } = await axios.post(
-        `${process.env.REACT_APP_PROXY}/chat`,
+        `${process.env.REACT_APP_PROXY}/api/chat`,
         { userId: id },
         headers
       );
@@ -95,6 +109,47 @@ const SideDrawer = ({ loggedUser }) => {
       errorHandle(err);
     }
   };
+
+  const renderMenuItems = () => {
+    // Group notifications by chatId
+    const groupedNotifications = notification.reduce((acc, curr) => {
+      const chatId = curr.chat._id;
+      if (acc[chatId]) {
+        acc[chatId].count += 1;
+      } else {
+        acc[chatId] = {
+          notification: curr,
+          count: 1,
+        };
+      }
+      return acc;
+    }, {});
+
+    // Render menu items
+    return Object.values(groupedNotifications).map(
+      ({ notification, count }) => (
+        <MenuItem
+          key={notification._id}
+          onClick={() => {
+            dispatch(selectedChat(notification.chat));
+            dispatch(removeNotification(notification));
+          }}
+        >
+          {count > 1
+            ? `${count} new messages from ${
+                notification.chat.isGroupChat
+                  ? notification.chat.chatName
+                  : getSender(notification.chat.users)
+              }`
+            : notification.chat.isGroupChat
+            ? `New message in ${notification.chat.chatName}`
+            : `New message from ${getSender(notification.chat.users)}`}
+        </MenuItem>
+      )
+    );
+  };
+
+  // Inside the component
 
   return (
     <>
@@ -120,10 +175,42 @@ const SideDrawer = ({ loggedUser }) => {
         </Tooltip>
         <div>
           <Menu>
-            <MenuButton p={1}>
+            <MenuButton p={1} position="relative" marginRight={3}>
+              {notification.length > 0 && (
+                <Badge
+                  colorScheme="red"
+                  borderRadius="full"
+                  px={2}
+                  py={1}
+                  fontSize="xx-small"
+                  position="absolute"
+                  top="0"
+                  right="0"
+                >
+                  {notification.length}
+                </Badge>
+              )}
               <BellIcon fontSize="2xl" margin={1} />
             </MenuButton>
-            {/* <MenuList></MenuList> */}
+            <MenuList pl={2}>
+              {
+                !notification.length ? "No new messages" : renderMenuItems()
+                // notification.map((item) => (
+                //     <MenuItem
+                //       key={item._id}
+                //       onClick={() => {
+                //         dispatch(selectedChat(item.chat));
+                //         dispatch(removeNotification(item));
+                //       }}
+                //     >
+                //       {item.chat.isGroupChat
+                //         ? `New message in ${item.chat.chatName}`
+                //         : `New message from ${getSender(item.chat.users)}`}
+                //     </MenuItem>
+                //   )
+                // )
+              }
+            </MenuList>
           </Menu>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />} p={1}>
